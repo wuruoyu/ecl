@@ -104,6 +104,73 @@ void SensorSimulator::loadSensorDataFromFile(std::string file_name)
 	_has_replay_data = true;
 }
 
+// Assumption: every 10000 ms, four sensor
+void SensorSimulator::loadSensorDataFromFileSym(const char* file_name)
+{
+	float value;
+	std::vector<float> sensor_data;
+	uint64_t time_step = 0;
+
+	// constant
+	int FP_PER_EPOCH = 12;
+	int TEST_EPOCH = 10;
+	int EPOCH_TIME = 10000;
+
+	int fd = open(file_name, O_RDONLY);
+	if (fd < 0) {
+		perror("failed to open the input file");
+		return; 
+	}
+	while (read(fd, &value, sizeof(value)) == sizeof(value)) {
+		sensor_data.push_back(value);
+	}
+
+	std::cout << "sensor_data size: " << sensor_data.size() << std::endl;
+	assert(sensor_data.size() % FP_PER_EPOCH == 0);
+
+	for (time_step = 1; time_step <= TEST_EPOCH; time_step ++) {
+		sensor_info mag_sample;
+		sensor_info airspeed_sample;
+		sensor_info imu_sample;
+		sensor_info baro_sample;
+
+		int idx = (time_step - 1) * FP_PER_EPOCH;
+		int timestamp = time_step * EPOCH_TIME;
+
+		mag_sample.timestamp = timestamp;
+		mag_sample.sensor_type = sensor_info::MAG;
+		mag_sample.sensor_data[0] = sensor_data[idx];
+		mag_sample.sensor_data[1] = sensor_data[idx + 1];
+		mag_sample.sensor_data[2] = sensor_data[idx + 2];
+
+		airspeed_sample.timestamp = timestamp;
+		airspeed_sample.sensor_type = sensor_info::AIRSPEED;
+		airspeed_sample.sensor_data[0] = sensor_data[idx + 3];
+		airspeed_sample.sensor_data[1] = sensor_data[idx + 4];
+
+		imu_sample.timestamp = timestamp;
+		imu_sample.sensor_type = sensor_info::IMU;
+		imu_sample.sensor_data[0] = sensor_data[idx + 5];
+		imu_sample.sensor_data[1] = sensor_data[idx + 6];
+		imu_sample.sensor_data[2] = sensor_data[idx + 7];
+		imu_sample.sensor_data[3] = sensor_data[idx + 8];
+		imu_sample.sensor_data[4] = sensor_data[idx + 9];
+		imu_sample.sensor_data[5] = sensor_data[idx + 10];
+
+		baro_sample.timestamp = timestamp;
+		baro_sample.sensor_type = sensor_info::BARO;
+		baro_sample.sensor_data[0] = sensor_data[idx + 11];
+
+		_replay_data.emplace_back(mag_sample);
+		_replay_data.emplace_back(airspeed_sample);
+		_replay_data.emplace_back(imu_sample);
+		_replay_data.emplace_back(baro_sample);
+	}
+
+	close(fd);
+	_has_replay_data = true;
+}
+
 void SensorSimulator::setSensorRateToDefault()
 {
 	_imu.setRateHz(200);

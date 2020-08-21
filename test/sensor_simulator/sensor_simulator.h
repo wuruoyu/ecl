@@ -49,6 +49,11 @@
 #include <vector>
 #include <array>
 
+#include <fcntl.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
 #include "imu.h"
 #include "mag.h"
 #include "baro.h"
@@ -116,7 +121,8 @@ public:
 	void setImuBias(Vector3f accel_bias, Vector3f gyro_bias);
 	void simulateOrientation(Quatf orientation);
 
-	void loadSensorDataFromFile(std::string filename);
+	void loadSensorDataFromFile(std::string file_name);
+	void loadSensorDataFromFileSym(const char* file_name);
 
 	Imu _imu;
 	Mag _mag;
