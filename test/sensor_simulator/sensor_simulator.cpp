@@ -112,9 +112,9 @@ void SensorSimulator::loadSensorDataFromFileSym(const char* file_name)
 	uint64_t time_step = 0;
 
 	// constant
-	int FP_PER_EPOCH = 12;
-	int TEST_EPOCH = 10;
-	int EPOCH_TIME = 10000;
+	uint64_t FP_PER_EPOCH = 12;
+	uint64_t TEST_EPOCH = 10;
+	uint64_t EPOCH_TIME = 10000;
 
 	int fd = open(file_name, O_RDONLY);
 	if (fd < 0) {

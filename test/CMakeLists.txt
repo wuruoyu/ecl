@@ -56,6 +56,7 @@ set(SRCS
 	test_geo.cpp
 	test_geo_lookup.cpp
 	test_EKF_utils.cpp
+  test_EKF_replay_sym.cpp
    )
 add_executable(ECL_GTESTS ${SRCS})
 

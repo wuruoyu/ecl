@@ -15,21 +15,23 @@ int main()
   EkfWrapper _ekf_wrapper(_ekf);
   EkfLogger _ekf_logger(_ekf);
 
-  _sensor_simulator.loadSensorDataFromFile("/home/wuruoyu/workspace/numeric/lib/ecl/test/replay_data/iris_gps.csv");
+  _sensor_simulator.loadSensorDataFromFileSym("/home/ruoyu/workspace/numeric/pass/test/replay_sensor/sample_sensor_data.txt");
 
-  _ekf_logger.setFilePath("/home/wuruoyu/workspace/numeric/lib/ecl/test/change_indication/iris_gps.csv");
+  //_ekf_logger.setFilePath("/home/wuruoyu/workspace/numeric/lib/ecl/test/change_indication/iris_gps.csv");
 
   // Start simulation and enable fusion of additional sensor types here
   // By default the IMU, Baro and Mag sensor simulators are already running
-  _sensor_simulator.startGps();
-  _ekf_wrapper.enableGpsFusion();
+  
+  // TODO: enable the GPS
+  //_sensor_simulator.startGps();
+  //_ekf_wrapper.enableGpsFusion();
 
-  uint8_t logging_rate_hz = 10;
-  for(int i = 0; i < 35 * logging_rate_hz; ++i)
+  uint8_t logging_rate_hz = 100;
+  for(int i = 0; i < 9 * logging_rate_hz; ++i)
   {
     std::cout << "each step" << std::endl;
     _sensor_simulator.runReplaySeconds(1.0f / logging_rate_hz);
-    _ekf_logger.writeStateToFile();
+    //_ekf_logger.writeStateToFile();
   }
 }
 
